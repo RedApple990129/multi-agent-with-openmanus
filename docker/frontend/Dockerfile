@@ -1,9 +1,6 @@
-FROM node:16-slim
+FROM davidetriso/nextjs:node-20.18-debian
 
 WORKDIR /app
-
-COPY package.json package-lock.json* ./
-RUN npm install
 
 COPY . .
 

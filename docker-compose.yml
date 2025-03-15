@@ -1,29 +1,16 @@
 version: '3.8'
 
 services:
-  agent:
+  unified:
     build: 
       context: .
-      dockerfile: docker/agent/Dockerfile
+      dockerfile: docker/unified/Dockerfile
     ports:
       - "5000:5000"
     environment:
       - PYTHONPATH=/app
       - FLASK_APP=src/server.py
       - FLASK_ENV=development
-    volumes:
-      - .:/app
-    depends_on:
-      - tools
-
-  tools:
-    build:
-      context: .
-      dockerfile: docker/tools/Dockerfile
-    environment:
-      - PYTHONPATH=/app
-    volumes:
-      - .:/app
 
   frontend:
     build:
@@ -31,7 +18,5 @@ services:
       dockerfile: docker/frontend/Dockerfile
     ports:
       - "3000:3000"
-    volumes:
-      - ./src:/app/src
     depends_on:
-      - agent 
+      - unified

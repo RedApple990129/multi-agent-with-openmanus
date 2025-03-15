@@ -29,8 +29,8 @@ This repository provides a starting point for developers and researchers to buil
 Before you begin, ensure you have the following installed:
 - [Docker](https://docs.docker.com/get-docker/) (version 20.10 or higher)
 - [Docker Compose](https://docs.docker.com/compose/install/) (version 1.29 or higher)
-- [Python](https://www.python.org/downloads/) (3.9 or higher)
-- [Node.js](https://nodejs.org/) (16.x or higher)
+- [Node.js](https://nodejs.org/) (version 20.18 or higher, for local development)
+- [Python](https://python.org/) (version 3.9 or higher, for local development)
 - Git (for cloning and contributing)
 
 ## Getting Started
@@ -43,23 +43,20 @@ cd OpenManus
 
 ### 2. Build and Run with Docker
 ```bash
-# Build the Docker images
-docker-compose build
-
-# Start the services
-docker-compose up
+# Build and start all containers
+docker-compose up --build
 ```
 
-This will launch the core components:
-- Agent Server: Handles task delegation and execution.
-- Tool Layer: Provides web browsing, code execution, and data processing tools.
-- Frontend: A basic interface for interacting with the agent (optional).
+This will launch:
+- Backend container with the multi-agent system and integrated tools
+- Frontend container serving the Next.js web interface
+- API server for task delegation and execution
 
 ### 3. Test the System
 Once running, you can interact with OpenManus via:
-- CLI: Use the provided Python client (`python client.py`).
-- API: Send requests to http://localhost:5000 (see API docs below).
-- Web UI: Access http://localhost:3000 (if enabled).
+- CLI: Use the provided Python client (`python client.py`)
+- API: Send requests to http://localhost:5000 (see API docs below)
+- Web UI: Access http://localhost:3000
 
 Example CLI command:
 ```bash
@@ -69,35 +66,48 @@ python client.py --task "Plan a 3-day trip to Tokyo"
 ### Project Structure
 ```
 OpenManus/
-├── docker/               # Docker configurations and images
-│   ├── agent/            # Dockerfile for the agent server
-│   ├── tools/            # Dockerfile for tool integrations
-│   └── frontend/         # Dockerfile for the web UI
-├── src/                  # Source code
-│   ├── agents/           # Multi-agent logic (Python)
-│   ├── tools/            # Tool implementations (Python/JavaScript)
-│   ├── client.py         # CLI client for testing
-│   └── server.py         # Main API server
-├── docs/                 # Documentation and API specs
-├── docker-compose.yml    # Docker Compose configuration
-└── README.md             # This file
+├── docker/               # Docker configurations
+│   ├── frontend/        # Next.js frontend container
+│   │   └── Dockerfile   # Frontend container configuration
+│   └── unified/         # Backend container configuration
+│       ├── Dockerfile   # Backend container configuration
+│       └── start.sh     # Container startup script
+├── src/                 # Source code
+│   ├── agents/          # Multi-agent logic (Python)
+│   ├── tools/           # Tool implementations
+│   ├── client.py        # CLI client for testing
+│   └── server.py        # Main API server
+├── docs/                # Documentation and API specs
+├── package.json         # Next.js frontend dependencies
+├── next.config.js       # Next.js configuration
+├── docker-compose.yml   # Docker Compose configuration
+└── README.md           # This file
 ```
 
 ### Configuration
 Edit the `docker-compose.yml` file to customize:
-- Ports (e.g., 5000 for API, 3000 for UI).
-- Environment variables (e.g., API keys for external tools).
-- Volume mounts for persistent data.
-
-Example:
 ```yaml
 services:
-  agent:
-    build: ./docker/agent
+  backend:
+    build: 
+      context: .
+      dockerfile: docker/unified/Dockerfile
     ports:
-      - "5000:5000"
+      - "5000:5000"  # API port
     environment:
       - WEB_BROWSER_API_KEY=your_key_here
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+    ports:
+      - "3000:3000"  # Web UI port
+    depends_on:
+      - backend
 ```
 
 ### API Documentation
