@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Start Flask server in background
-FLASK_APP=src/server.py FLASK_ENV=development PYTHONPATH=/app:/app/src python3 -m flask run --host=0.0.0.0 &
+# Start FastAPI server in background
+PYTHONPATH=/app:/app/src python3 -m uvicorn src.server:app --host 0.0.0.0 --port 8000 --reload &
 
 # Start tools server in background
 PYTHONPATH=/app:/app/src python3 src/tools/server.py &

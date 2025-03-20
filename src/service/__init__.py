@@ -1,0 +1,1 @@
+"""Service package for OpenManus workflow management."""

@@ -1,3 +1,15 @@
 flask>=2.0.0
 requests>=2.26.0
 python-dotenv>=0.19.0
+fastapi>=0.68.0
+uvicorn>=0.15.0
+pydantic>=1.8.0
+sse-starlette>=0.7.0
+langgraph>=0.0.10
+langchain>=0.1.0
+langchain-core>=0.1.0
+langchain-community>=0.0.10
+langchain-experimental>=0.0.10
+json-repair>=0.3.0
+pytest>=7.0.0
+pytest-cov>=4.0.0

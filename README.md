@@ -4,7 +4,7 @@
   <img src="docs/logo.png" alt="OpenManus Logo">
 </p>
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![License](https://img.shields.io/badge/license-UNLICENSE-blue.svg)
 ![Docker](https://img.shields.io/badge/docker-supported-green.svg)
 ![Python](https://img.shields.io/badge/python-3.9+-blue.svg)
 ![JavaScript](https://img.shields.io/badge/javascript-ES6+-yellow.svg)
@@ -50,12 +50,12 @@ docker-compose up --build
 This will launch:
 - Backend container with the multi-agent system and integrated tools
 - Frontend container serving the Next.js web interface
-- API server for task delegation and execution
+- FastAPI server for task delegation and execution
 
 ### 3. Test the System
 Once running, you can interact with OpenManus via:
 - CLI: Use the provided Python client (`python client.py`)
-- API: Send requests to http://localhost:5000 (see API docs below)
+- API: Send requests to http://localhost:8000 (see API docs below)
 - Web UI: Access http://localhost:3000
 
 Example CLI command:
@@ -74,9 +74,24 @@ OpenManus/
 │       └── start.sh     # Container startup script
 ├── src/                 # Source code
 │   ├── agents/          # Multi-agent logic (Python)
+│   │   ├── nodes/       # Agent node implementations
+│   │   ├── browser_agent.py
+│   │   ├── coder_agent.py
+│   │   ├── coordinator.py
+│   │   ├── reporter_agent.py
+│   │   └── research_agent.py
+│   ├── components/      # React components
+│   ├── config/          # Configuration files
+│   ├── graph/           # Graph-based workflow
+│   ├── llms/            # LLM integrations
+│   ├── pages/           # Next.js pages
+│   ├── prompts/         # Agent prompts
+│   ├── service/         # Backend services
 │   ├── tools/           # Tool implementations
+│   ├── utils/           # Utility functions
+│   ├── workflow/        # Workflow management
 │   ├── client.py        # CLI client for testing
-│   └── server.py        # Main API server
+│   └── server.py        # FastAPI server
 ├── docs/                # Documentation and API specs
 ├── package.json         # Next.js frontend dependencies
 ├── next.config.js       # Next.js configuration
@@ -93,7 +108,7 @@ services:
       context: .
       dockerfile: docker/unified/Dockerfile
     ports:
-      - "5000:5000"  # API port
+      - "8000:8000"  # FastAPI port
     environment:
       - WEB_BROWSER_API_KEY=your_key_here
     volumes:
@@ -111,7 +126,7 @@ services:
 ```
 
 ### API Documentation
-The agent server exposes a REST API at http://localhost:5000. Key endpoints:
+The agent server exposes a REST API at http://localhost:8000. Key endpoints:
 
 **POST /task**: Submit a task for execution.
 ```json
@@ -145,12 +160,13 @@ Please read `CONTRIBUTING.md` for guidelines.
 
 ### Inspiration
 OpenManus is inspired by:
+- The langmanus project (GitHub).
 - The official Manus project (manus.im).
 - The open-Manus community effort (GitHub).
 - GAIA benchmark for general AI assistants (arXiv).
 
 ### License
-This project is licensed under the MIT License. See `LICENSE` for details.
+This project is licensed under the UNLICENSE. See `LICENSE` for details.
 
 ### Contact
 For questions or collaboration, reach out via GitHub Issues or email [henryalps@gmail.com](mailto:henryalps@gmail.com).
