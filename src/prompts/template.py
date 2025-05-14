@@ -6,6 +6,16 @@ from typing import Dict, List
 from langchain_core.prompts import PromptTemplate
 from langgraph.prebuilt.chat_agent_executor import AgentState
 
+from src.prompts.coordinator import register_templates as register_coordinator_templates
+from src.prompts.planner import register_templates as register_planner_templates
+from src.prompts.supervisor import register_templates as register_supervisor_templates
+from src.prompts.researcher import register_templates as register_researcher_templates
+from src.prompts.coder import register_templates as register_coder_templates
+from src.prompts.browser import register_templates as register_browser_templates
+from src.prompts.reporter import register_templates as register_reporter_templates
+from src.prompts.knowledge_extraction import register_templates as register_knowledge_templates
+from src.prompts.entity_extraction import register_templates as register_entity_templates
+
 
 class OpenManusPromptTemplate:
     """OpenManus prompt template manager for handling agent-specific prompts."""
@@ -52,3 +62,16 @@ class OpenManusPromptTemplate:
 
         # Combine system prompt with existing messages
         return [{"role": "system", "content": system_prompt}] + state["messages"]
+        
+    @classmethod
+    def initialize(cls):
+        """Initialize the prompt templates."""
+        register_coordinator_templates(cls.templates)
+        register_planner_templates(cls.templates)
+        register_supervisor_templates(cls.templates)
+        register_researcher_templates(cls.templates)
+        register_coder_templates(cls.templates)
+        register_browser_templates(cls.templates)
+        register_reporter_templates(cls.templates)
+        register_knowledge_templates(cls.templates)
+        register_entity_templates(cls.templates)

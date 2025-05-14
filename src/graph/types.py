@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Optional, List, Dict
 from typing_extensions import TypedDict
 from langgraph.graph import MessagesState
 
@@ -25,3 +25,8 @@ class State(MessagesState):
     full_plan: str
     deep_thinking_mode: bool
     search_before_planning: bool
+    
+    # Knowledge Management
+    memory_context: Optional[List[Dict]]
+    knowledge_graph_context: Optional[List[Dict]]
+    vector_search_results: Optional[List[Dict]]

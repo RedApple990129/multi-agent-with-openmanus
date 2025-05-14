@@ -8,6 +8,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from sse_starlette.sse import EventSourceResponse
 
+# Import knowledge system components
+from src.knowledge.memory import MemoryManager
+from src.prompts.template import OpenManusPromptTemplate
+
 # Configure logging
 logger = logging.getLogger(__name__)
 
@@ -17,6 +21,14 @@ app = FastAPI(
     description="API for OpenManus LangGraph-based agent workflow",
     version="0.1.0",
 )
+
+# Initialize knowledge system
+memory_manager = MemoryManager()
+memory_manager.initialize()
+
+# Initialize prompt templates
+OpenManusPromptTemplate.templates = {}
+OpenManusPromptTemplate.initialize()
 
 # Add CORS middleware
 app.add_middleware(

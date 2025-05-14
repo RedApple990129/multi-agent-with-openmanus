@@ -9,6 +9,7 @@ from src.agents.nodes import ( # Import agent nodes
     browser_node,
     reporter_node,
 )
+from src.agents.knowledge_agent import knowledge_agent_node # Import knowledge agent node
 
 def build_graph():
     """Build and return the agent workflow graph."""
@@ -22,17 +23,21 @@ def build_graph():
     builder.add_node("coder", coder_node)
     builder.add_node("browser", browser_node)
     builder.add_node("reporter", reporter_node)
+    builder.add_node("knowledge", knowledge_agent_node)
 
     # Define edges
     builder.add_edge(START, "coordinator")
-    builder.add_edge("coordinator", "planner") # Coordinator -> Planner
+    builder.add_edge("coordinator", "knowledge") # Coordinator -> Knowledge (enrich with memory context)
+    builder.add_edge("knowledge", "planner") # Knowledge -> Planner (with memory context)
     builder.add_edge("planner", "supervisor") # Planner -> Supervisor
     builder.add_edge("supervisor", "researcher", condition=lambda state: state['next'] == "researcher") # Supervisor -> Researcher if next agent is researcher
     builder.add_edge("supervisor", "coder", condition=lambda state: state['next'] == "coder") # Supervisor -> Coder if next agent is coder
     builder.add_edge("supervisor", "browser", condition=lambda state: state['next'] == "browser") # Supervisor -> Browser if next agent is browser
     builder.add_edge("supervisor", "reporter", condition=lambda state: state['next'] == "reporter") # Supervisor -> Reporter if next agent is reporter
+    builder.add_edge("supervisor", "knowledge", condition=lambda state: state['next'] == "knowledge") # Supervisor -> Knowledge if next agent is knowledge
     builder.add_edge("supervisor", "__end__", condition=lambda state: state['next'] == "__end__") # Supervisor -> END if next agent is FINISH
-    builder.add_edge("researcher", "supervisor") # Researcher -> Supervisor
+    builder.add_edge("researcher", "knowledge") # Researcher -> Knowledge (store research findings)
+    builder.add_edge("knowledge", "supervisor", condition=lambda state: state.get('next') != "knowledge") # Knowledge -> Supervisor (after storing)
     builder.add_edge("coder", "supervisor") # Coder -> Supervisor
     builder.add_edge("browser", "supervisor") # Browser -> Supervisor
     builder.add_edge("reporter", "supervisor") # Reporter -> Supervisor
